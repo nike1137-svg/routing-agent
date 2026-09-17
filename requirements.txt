@@ -1,0 +1,5 @@
+langgraph==1.2.11
+openai==3.14.1
+pymupdf==1.28.2
+streamlit==1.64.0
+python-dotenv==1.2.3

@@ -1,0 +1,12 @@
+# secrets
+.env
+.streamlit/secrets.toml
+
+# python
+.venv/
+__pycache__/
+*.pyc
+
+# local API cost ledger, raw evaluation runs (numbers are collected in REPORT.md)
+.cost_ledger.json
+runs/
