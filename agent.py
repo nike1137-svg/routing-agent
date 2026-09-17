@@ -44,10 +44,6 @@ class MissingApiKey(RuntimeError):
     pass
 
 
-class MissingApiKey(RuntimeError):
-    pass
-
-
 def _read_ledger() -> dict:
     if LEDGER_PATH.exists():
         return json.loads(LEDGER_PATH.read_text(encoding="utf-8"))
