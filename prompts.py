@@ -5,7 +5,7 @@
 import json
 from pathlib import Path
 
-GOLDENSET_PATH = Path(__file__).parent / "data" / "goldenset.json"
+from config import GOLDENSET_PATH  # noqa: E402  (evaluate·app 이 prompts.GOLDENSET_PATH 로도 쓴다)
 
 DOC_NAME = "「2026년도 예비창업패키지 예비창업자 모집 공고문」(중소벤처기업부 공고 제2026-207호)"
 

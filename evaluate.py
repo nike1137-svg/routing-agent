@@ -13,11 +13,8 @@ from pathlib import Path
 
 import agent
 import prompts
+from config import MODEL_JUDGE, RUNS_DIR as RUNS
 from context import CATEGORIES
-
-ROOT = Path(__file__).parent
-RUNS = ROOT / "runs"
-MODEL_JUDGE = os.getenv("MODEL_JUDGE", "gpt-5.6-luna")
 LABELS = list(CATEGORIES)  # eligibility, application, evaluation, support, out_of_scope
 SHORT = {"eligibility": "자격", "application": "신청", "evaluation": "평가", "support": "지원", "out_of_scope": "범위밖"}
 

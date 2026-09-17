@@ -12,27 +12,12 @@ from datetime import datetime
 from pathlib import Path
 from typing import TypedDict
 
-from dotenv import load_dotenv
 from langgraph.graph import END, START, StateGraph
 from openai import OpenAI
 
 import context
 import prompts
-
-load_dotenv(Path(__file__).parent / ".env")
-
-MODEL_ROUTER = os.getenv("MODEL_ROUTER", "gpt-5.6-luna")
-MODEL_ANSWER = os.getenv("MODEL_ANSWER", "gpt-5.6-luna")
-CONFIDENCE_THRESHOLD = 0.7
-
-# USD / 1M tokens (input, output). OpenAI 요금 페이지 Standard·Short context, 2026-09-17 확인.
-# 캐시 입력 할인은 반영하지 않는다(비용을 많게 잡는 쪽).
-PRICES = {
-    "gpt-5.6-luna": (0.20, 1.20),
-    "gpt-5.6-terra": (2.00, 12.00),
-    "gpt-5.6-sol": (4.00, 20.00),
-}
-LEDGER_PATH = Path(__file__).parent / ".cost_ledger.json"
+from config import CONFIDENCE_THRESHOLD, LEDGER_PATH, MODEL_ANSWER, MODEL_ROUTER, PRICES, cost_limit_usd
 
 
 # ---------------------------------------------------------------- 비용 기록 · LLM 호출
@@ -64,7 +49,7 @@ def chat_json(model: str, messages: list[dict], max_tokens: int, purpose: str) -
         raise MissingApiKey("OPENAI_API_KEY 가 없습니다. .env.example 을 .env 로 복사하고 키를 입력하세요.")
     if model not in PRICES:
         raise ValueError(f"가격 정보가 없는 모델: {model}")
-    limit = float(os.getenv("COST_LIMIT_USD", "1.5"))
+    limit = cost_limit_usd()
     ledger = _read_ledger()
     if ledger["total_usd"] >= limit:
         raise CostLimitExceeded(f"누적 비용 {ledger['total_usd']:.4f}달러가 상한 {limit}달러에 도달해 호출을 멈춥니다.")

@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pymupdf
 
-DOC_PATH = Path(__file__).parent / "docs" / "notice_2026-207.pdf"
+from config import DOC_PATH
 
 CATEGORIES = {
     "eligibility": "신청 자격",
