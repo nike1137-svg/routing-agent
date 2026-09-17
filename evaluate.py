@@ -107,7 +107,7 @@ def run_pipeline(label: str, change: str) -> Path:
                "expected_tools": item["expected_tools"], "difficulty": item["difficulty"]}
         try:
             state = agent.run(item["question"])
-            rec.update({k: state.get(k) for k in ("category", "confidence", "route_reason", "tools_called", "sections",
+            rec.update({k: state.get(k) for k in ("category", "confidence", "route_reason", "tools_called", "tool_rounds", "sections",
                                                    "answer", "cited_sections", "verification", "handoff_reason",
                                                    "final_answer", "cost_usd")})
         except agent.CostLimitExceeded as e:

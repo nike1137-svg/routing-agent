@@ -35,20 +35,40 @@ confidence 는 고른 카테고리가 맞을 가능성을 0.0~1.0 사이 숫자�
 [출력]
 JSON 객체 하나만 출력한다: {{"category": "<카테고리>", "confidence": <숫자>, "reason": "<한 문장>"}}"""
 
-ANSWER_SYSTEM = f"""너는 {DOC_NAME} 안내 담당이다. 사용자 메시지의 [근거]에 적힌 내용만 사용해 답한다.
+# 개선 4: 모델이 도구를 골라 부르는 답변 단계의 지시문. 답변 규칙은 개선 3과 같고,
+# "핵심 답이 없으면 answerable=false" 대신 handoff 도구를 부르게 했다.
+TOOL_AGENT_SYSTEM = f"""너는 {DOC_NAME} 안내 담당이다. 도구로 조회한 근거에 적힌 내용만 사용해 답한다.
 
-[규칙]
+[도구 사용]
+1. 답하기 전에 질문에 필요한 조회 도구를 골라 호출한다. 조회하지 않고 답하지 않는다.
+2. 분류기가 판단한 카테고리를 참고로 알려 준다. 보통 그 카테고리의 조회 도구 하나로 충분하다. 질문에 필요한 근거가 다른 카테고리에 있다고 판단될 때만 다른 조회 도구를 추가로 호출한다.
+3. 조회한 근거에 질문이 묻는 핵심(금액·일정·인원·항목·가능 여부 등)에 대한 답이 없으면 답을 쓰지 말고 handoff 도구를 호출한다. 관련된 다른 정보가 근거에 있더라도 핵심 답이 없으면 handoff 를 호출한다.
+
+[답변 규칙]
 1. 근거에 없는 사실·수치·일정·사업 정보를 추가하지 않는다. 일반 상식이나 다른 연도 공고의 내용도 쓰지 않는다.
-2. 질문이 묻는 핵심(금액·일정·인원·항목·가능 여부 등)에 대한 답이 근거에 없으면 answerable 을 false 로 한다. 관련된 다른 정보가 근거에 있더라도 핵심 답이 없으면 false 이다.
-3. 핵심 답은 근거에 있고 질문의 세부 일부만 근거에 없으면, 근거가 있는 부분을 답하고 없는 부분은 "공고문에 나와 있지 않습니다"라고 밝힌다.
-4. 답의 핵심 사실에 붙은 조건·예외(예: 적용 대상별로 다른 기간, 예외 인정 요건)와, 결과에 뒤따르는 의무(예: 혜택을 받더라도 거쳐야 하는 절차)가 근거에 있으면 빠뜨리지 않고 함께 적는다. 이런 내용은 근거의 다른 항목에 떨어져 있을 수 있으니 근거 전체에서 찾는다.
-5. 날짜·금액·점수·기간·인원 등 숫자는 근거에 적힌 표기를 그대로 쓴다. 단위를 바꾸거나 환산하지 않는다.
-6. 답변은 존댓말 2~4문장으로 쓰고, 끝에 (공고문 N쪽) 형식으로 근거 쪽을 적는다. 쪽은 근거 블록 제목에 적힌 쪽을 쓴다.
-7. cited_sections 에는 실제로 사용한 근거 블록의 ID(S01 등)만 적는다.
+2. 핵심 답은 근거에 있고 질문의 세부 일부만 근거에 없으면, 근거가 있는 부분을 답하고 없는 부분은 "공고문에 나와 있지 않습니다"라고 밝힌다.
+3. 답의 핵심 사실에 붙은 조건·예외(예: 적용 대상별로 다른 기간, 예외 인정 요건)와, 결과에 뒤따르는 의무(예: 혜택을 받더라도 거쳐야 하는 절차)가 근거에 있으면 빠뜨리지 않고 함께 적는다. 이런 내용은 근거의 다른 항목에 떨어져 있을 수 있으니 근거 전체에서 찾는다.
+4. 날짜·금액·점수·기간·인원 등 숫자는 근거에 적힌 표기를 그대로 쓴다. 단위를 바꾸거나 환산하지 않는다.
+5. 답변은 존댓말 2~4문장으로 쓰고, 끝에 (공고문 N쪽) 형식으로 근거 쪽을 적는다. 쪽은 근거 블록 제목에 적힌 쪽을 쓴다."""
 
-[출력]
-JSON 객체 하나만 출력한다: {{"answerable": true, "answer": "<답변>", "cited_sections": ["S02"]}}
-답할 수 없으면: {{"answerable": false, "answer": "", "cited_sections": []}}"""
+_SEARCH_DESCRIPTIONS = {
+    "search_eligibility": "신청 자격 근거 조회: 누가 신청할 수 있는지, 자격 기준일, 자격 예외(부동산임대업·폐업 이력), 신청분야(일반·특화)와 분야별 선정 규모, 신청 제외 대상, 지원 제외 업종·사업, 동시수행 불가 사업",
+    "search_application": "신청 절차·서류 근거 조회: 접수 기간·방법, 회원가입·실명인증, 주관기관 선택, 제출서류와 제출 방법, 파일 용량, 신청 시 유의사항, 주관기관 문의처, 제3자 부당개입 주의",
+    "search_evaluation": "선정 평가 근거 조회: 평가 절차와 일정, 서류평가·인큐베이팅·발표평가, 가점·서류평가 면제·우선선정, 평가지표와 점수 기준, 협약체결확약서, 사업 운영일정, 평가 중 유의사항(이의신청 등)",
+    "search_support": "지원 내용·선정 후 의무 근거 조회: 사업화 자금 규모, 단계별 지원, 집행 비목, 창업프로그램, 협약기간, 부정수급·대필 제재, 선정 후 유의사항, 선정자의 의무",
+}
+
+AGENT_TOOLS = [
+    {"type": "function", "function": {"name": name, "description": desc,
+                                      "parameters": {"type": "object", "properties": {}, "additionalProperties": False}}}
+    for name, desc in _SEARCH_DESCRIPTIONS.items()
+] + [
+    {"type": "function", "function": {
+        "name": "handoff",
+        "description": "조회한 근거로 질문의 핵심에 답할 수 없을 때 담당 기관 문의로 넘긴다. 답을 지어내지 않기 위해 사용한다.",
+        "parameters": {"type": "object", "properties": {"reason": {"type": "string", "description": "넘기는 이유 한 문장"}},
+                       "required": ["reason"], "additionalProperties": False}}},
+]
 
 
 def _router_examples() -> list[dict]:
@@ -66,8 +86,8 @@ def router_messages(question: str) -> list[dict]:
     return messages
 
 
-def answer_messages(question: str, context_text: str) -> list[dict]:
+def agent_messages(question: str, category_name: str, confidence: float) -> list[dict]:
     return [
-        {"role": "system", "content": ANSWER_SYSTEM},
-        {"role": "user", "content": f"[질문]\n{question}\n\n[근거]\n{context_text}"},
+        {"role": "system", "content": TOOL_AGENT_SYSTEM},
+        {"role": "user", "content": f"[분류기 판단] {category_name} (확신도 {confidence:.2f})\n\n[질문]\n{question}"},
     ]
