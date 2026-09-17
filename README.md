@@ -24,7 +24,7 @@
 
 ## 결과 요약
 
-점수용 평가셋 31건, 최종 구성으로 2회 측정한 결과입니다. 측정 방법과 개선 과정, 실패 원인은 [REPORT.md](REPORT.md) 4절에 있습니다.
+점수용 평가셋 31건, 제출 구성(개선 3)으로 2회 측정한 결과입니다. 측정 방법과 개선 과정(개선 1~8), 실패 원인은 [REPORT.md](REPORT.md) 4절에 있습니다.
 
 | 지표 | 1회차 | 2회차 |
 |---|---|---|
@@ -48,9 +48,10 @@ routing-agent/
 │   └── demo_chat_input.png    # 데모 캡처 (채팅 입력창 질문)
 ├── data/
 │   └── goldenset.json         # 평가셋 36건 (점수용 31 + 예시용 5)
+├── config.py                  # 모델 · 임계값 · 경로 설정
 ├── prompts.py                 # 분류 지침 · 답변 규칙
 ├── context.py                 # 문서 쪼개기 · 카테고리별 근거 조립 (매핑표)
-├── agent.py                   # LangGraph 파이프라인 · 기계적 검증 · 비용 상한
+├── agent.py                   # LangGraph 파이프라인 · 기계적 검증
 ├── evaluate.py                # 도구 호출 적절성 · 답변 적절성 · 분류 지표 측정
 ├── app.py                     # Streamlit 데모
 ├── requirements.txt
@@ -60,7 +61,9 @@ routing-agent/
 └── REPORT.md
 ```
 
-실행하면 로컬에만 생기고 저장소에는 올라가지 않는 파일: `.env`(키), `.cost_ledger.json`(누적 비용 기록), `runs/`(측정 결과)
+실행하면 로컬에만 생기고 저장소에는 올라가지 않는 파일: `.env`(키), `runs/`(측정 결과) 등
+
+미채택 실험 코드는 브랜치에 있습니다: `exp4-model-tools`, `exp5-tools-answerable`, `exp6-router-intent`, `exp8-tools-terra-router` (내용은 REPORT 4절)
 
 ## 설치
 
@@ -86,7 +89,6 @@ pip install -r requirements.txt
 | `MODEL_ROUTER` | 카테고리 판정 모델 | `gpt-5.6-luna` |
 | `MODEL_ANSWER` | 답변 모델 | `gpt-5.6-luna` |
 | `MODEL_JUDGE` | 답변 채점 모델 (측정용) | `gpt-5.6-luna` |
-| `COST_LIMIT_USD` | 누적 API 비용 상한(달러). 넘으면 호출을 멈춤 | `1.5` |
 
 키가 없으면 실행 명령은 오류 화면 대신 안내 문구를 출력하고 멈춥니다.
 
@@ -118,11 +120,9 @@ python evaluate.py score <라벨>
 
 `runs/`는 저장소에 없으므로, 새로 클론했다면 `score` 전에 `run`을 먼저 실행해야 합니다.
 
-## 비용 주의
+## 주의
 
-- 모든 호출은 OpenAI API를 사용하며 유료입니다. 점수용 31건 1회 측정에 약 0.03달러가 들었습니다(채점 제외, `gpt-5.6-luna` 기준).
-- 호출마다 실제 토큰 사용량으로 비용을 계산해 `.cost_ledger.json`에 누적하고, `COST_LIMIT_USD`를 넘으면 다음 호출 전에 멈춥니다.
-- 데모를 외부에 공개하면 다른 사람이 키로 비용을 쓸 수 있습니다. `--server.address localhost`로 실행하세요.
+- 데모를 외부에 공개하면 다른 사람이 내 API 키로 호출할 수 있습니다. `--server.address localhost`로 실행하세요.
 
 ## 근거 문서 출처
 
