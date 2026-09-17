@@ -1,0 +1,825 @@
+{
+  "meta": {
+    "source": "docs/notice_2026-207.pdf (중소벤처기업부 공고 제2026-207호, 2026-03-24 수정 공고 2차)",
+    "categories": {
+      "eligibility": "신청 자격",
+      "application": "신청 절차·서류",
+      "evaluation": "선정 평가",
+      "support": "지원 내용·선정 후 의무",
+      "out_of_scope": "범위 밖"
+    },
+    "tools": {
+      "search_eligibility": "신청 자격 근거 조회",
+      "search_application": "신청 절차·서류 근거 조회",
+      "search_evaluation": "선정 평가 근거 조회",
+      "search_support": "지원 내용·선정 후 의무 근거 조회",
+      "handoff": "넘기기"
+    },
+    "handoff_message": "문의하신 내용은 2026년도 예비창업패키지 모집 공고문(중소벤처기업부 공고 제2026-207호)에서 확인할 수 없어 답변드리기 어렵습니다. 담당 기관에 직접 문의해 주세요.",
+    "page_numbering": "PDF 쪽 번호 (공고문 하단 인쇄 번호와 동일)"
+  },
+  "items": [
+    {
+      "id": "E1-1",
+      "split": "eval",
+      "category": "eligibility",
+      "difficulty": "easy",
+      "question": "신청자격을 판단하는 기준일이 언제인가요?",
+      "expected_tools": [
+        "search_eligibility"
+      ],
+      "must_include": [
+        {
+          "fact": "신청자격 기준일은 2026년 1월 22일이다",
+          "page": 3,
+          "quote": "기준일 : ’26.1.22."
+        }
+      ],
+      "must_not": [
+        "공고일(2026년 2월 27일)을 기준일로 답함"
+      ],
+      "gold_answer": "신청자격 기준일은 2026년 1월 22일입니다. 이 날짜를 기준으로 신청자 명의의 사업자등록증이 없고, 법인의 법률상 대표권도 없어야 합니다. (공고문 3쪽)"
+    },
+    {
+      "id": "E1-2",
+      "split": "eval",
+      "category": "eligibility",
+      "difficulty": "easy",
+      "question": "여성 분야는 몇 명을 선정하나요?",
+      "expected_tools": [
+        "search_eligibility"
+      ],
+      "must_include": [
+        {
+          "fact": "특화분야 중 여성 분야의 선정 규모는 70명이다",
+          "page": 4,
+          "quote": "여성 예비창업자에 한함"
+        }
+      ],
+      "must_not": [
+        "일반분야 인원(110명)을 답함",
+        "특화분야 전체 인원(190명)을 답함"
+      ],
+      "gold_answer": "특화분야 중 여성 분야의 선정 규모는 70명입니다. 혁신적인 기술창업 아이디어를 보유한 여성 예비창업자만 신청할 수 있습니다. (공고문 4쪽)"
+    },
+    {
+      "id": "E1-3",
+      "split": "eval",
+      "category": "eligibility",
+      "difficulty": "easy",
+      "question": "유흥주점을 창업하려는데 신청할 수 있나요?",
+      "expected_tools": [
+        "search_eligibility"
+      ],
+      "must_include": [
+        {
+          "fact": "일반유흥주점업은 지원 제외 대상 업종이라 신청할 수 없다",
+          "page": 19,
+          "quote": "일반유흥주점업"
+        }
+      ],
+      "must_not": [
+        "신청할 수 있다고 답함"
+      ],
+      "gold_answer": "신청할 수 없습니다. 일반유흥주점업은 중소기업창업 지원법 시행령에 따른 지원 제외 대상 업종이며, 창업 제외 업종을 영위하려는 사람은 신청 제외 대상입니다. (공고문 5쪽, 19쪽)"
+    },
+    {
+      "id": "H1-1",
+      "split": "eval",
+      "category": "eligibility",
+      "difficulty": "hard",
+      "question": "2025년 6월에 개인사업자를 폐업했고, 같은 업종으로 다시 창업하려고 합니다. 신청할 수 있나요?",
+      "expected_tools": [
+        "search_eligibility"
+      ],
+      "must_include": [
+        {
+          "fact": "같은 업종으로 창업하려면 폐업일로부터 3년(부도·파산은 2년)이 지나야 신청할 수 있어 지금은 신청할 수 없다",
+          "page": 3,
+          "quote": "폐업일로부터 3년(부도·파산의 경우 2년)이 경과해야 신청 가능"
+        },
+        {
+          "fact": "같은 업종인지는 한국표준산업분류 세세분류(5자리)로 판단한다",
+          "page": 3,
+          "quote": "한국표준산업분류 세세분류(5자리)"
+        }
+      ],
+      "must_not": [
+        "폐업했으므로 바로 신청할 수 있다고 답함",
+        "1년이 지나면 신청할 수 있다고 답함"
+      ],
+      "gold_answer": "같은 업종으로 창업하시려면 폐업일로부터 3년(부도·파산은 2년)이 지나야 신청할 수 있어, 2025년 6월 폐업이면 이번 공고에는 신청이 어렵습니다. 같은 업종인지는 한국표준산업분류 세세분류(5자리)로 판단하며, 다른 업종으로 창업할 예정이면 신청할 수 있습니다. (공고문 3쪽)"
+    },
+    {
+      "id": "H1-2",
+      "split": "eval",
+      "category": "eligibility",
+      "difficulty": "hard",
+      "question": "올해 다른 부처의 창업사업화 지원사업을 수행하고 있습니다. 예비창업패키지에 신청할 수 있나요?",
+      "expected_tools": [
+        "search_eligibility"
+      ],
+      "must_include": [
+        {
+          "fact": "2026년 중앙정부·공공기관 창업사업화 지원사업을 수행 중인 사람은 신청 제외 대상이다",
+          "page": 5,
+          "quote": "2026년 중앙정부·공공기관 창업사업화 지원사업 수행 중인 자(기업)"
+        }
+      ],
+      "must_not": [
+        "다른 부처 사업이면 상관없이 신청할 수 있다고 답함"
+      ],
+      "gold_answer": "2026년에 중앙정부·공공기관의 창업사업화 지원사업을 수행 중이면 신청 제외 대상입니다. 동시수행이 불가한 사업 목록은 붙임 3에 있으며, 같은 연도의 창업사업화 지원사업이 아니라면 신청할 수 있습니다. (공고문 5쪽, 21쪽)"
+    },
+    {
+      "id": "N1",
+      "split": "eval",
+      "category": "eligibility",
+      "difficulty": "hard",
+      "question": "소셜벤처 판별기준의 세부 평가 항목은 무엇인가요?",
+      "expected_tools": [
+        "search_eligibility",
+        "handoff"
+      ],
+      "must_include": [
+        {
+          "fact": "공고문에서 확인할 수 없는 내용이라고 안내한다",
+          "page": null,
+          "quote": null
+        }
+      ],
+      "must_not": [
+        "구체적인 판별 항목을 나열함"
+      ],
+      "gold_answer": "문의하신 내용은 2026년도 예비창업패키지 모집 공고문(중소벤처기업부 공고 제2026-207호)에서 확인할 수 없어 답변드리기 어렵습니다. 담당 기관에 직접 문의해 주세요."
+    },
+    {
+      "id": "E2-1",
+      "split": "eval",
+      "category": "application",
+      "difficulty": "easy",
+      "question": "접수 마감이 언제인가요?",
+      "expected_tools": [
+        "search_application"
+      ],
+      "must_include": [
+        {
+          "fact": "접수 마감은 2026년 3월 26일(목) 18:00이다",
+          "page": 6,
+          "quote": "’26. 3. 6.(금) ~ 3. 26.(목), 18:00까지"
+        },
+        {
+          "fact": "18:00 정각 이후에는 신규 신청이 불가하다",
+          "page": 6,
+          "quote": "18:00 정각 이후 신규 신청 불가"
+        }
+      ],
+      "must_not": [
+        "자정(24:00)까지 신청할 수 있다고 답함"
+      ],
+      "gold_answer": "접수 기간은 2026년 3월 6일(금)부터 3월 26일(목) 18:00까지이며, 18:00 정각 이후에는 신규 신청이 불가합니다. (공고문 6쪽)"
+    },
+    {
+      "id": "E2-2",
+      "split": "eval",
+      "category": "application",
+      "difficulty": "easy",
+      "question": "사업계획서 파일은 몇 MB까지 올릴 수 있나요?",
+      "expected_tools": [
+        "search_application"
+      ],
+      "must_include": [
+        {
+          "fact": "사업계획서 파일 용량 제한은 30MB이다",
+          "page": 7,
+          "quote": "30MB"
+        }
+      ],
+      "must_not": [
+        "30MB가 아닌 다른 용량을 제시함"
+      ],
+      "gold_answer": "사업계획서는 파일로 첨부하며 용량 제한은 30MB입니다. (공고문 7쪽)"
+    },
+    {
+      "id": "E2-3",
+      "split": "eval",
+      "category": "application",
+      "difficulty": "easy",
+      "question": "우편이나 방문으로도 신청할 수 있나요?",
+      "expected_tools": [
+        "search_application"
+      ],
+      "must_include": [
+        {
+          "fact": "온라인으로만 신청할 수 있다",
+          "page": 6,
+          "quote": "온라인으로만 신청 가능"
+        }
+      ],
+      "must_not": [
+        "우편 또는 방문 접수가 가능하다고 답함"
+      ],
+      "gold_answer": "온라인(K-Startup 누리집)으로만 신청할 수 있어 우편이나 방문 접수는 불가합니다. (공고문 6쪽)"
+    },
+    {
+      "id": "H2-1",
+      "split": "eval",
+      "category": "application",
+      "difficulty": "hard",
+      "question": "붙을 확률을 높이려고 주관기관 두 곳에 신청해도 되나요?",
+      "expected_tools": [
+        "search_application"
+      ],
+      "must_include": [
+        {
+          "fact": "주관기관은 1개만 선택해 신청할 수 있고 중복 신청은 불가하다",
+          "page": 18,
+          "quote": "한 개의 주관기관만 신청 가능(중복불가)"
+        },
+        {
+          "fact": "접수 마감 후에는 주관기관을 변경할 수 없다",
+          "page": 6,
+          "quote": "접수 마감 후 변경 불가"
+        }
+      ],
+      "must_not": [
+        "두 곳 이상 신청할 수 있다고 답함"
+      ],
+      "gold_answer": "안 됩니다. 신청할 때 희망하는 주관기관 1곳만 선택할 수 있고 중복 신청은 불가합니다. 선택한 주관기관은 접수 마감 후 변경할 수 없습니다. (공고문 6쪽, 18쪽)"
+    },
+    {
+      "id": "U5",
+      "split": "eval",
+      "category": "application",
+      "difficulty": "hard",
+      "question": "공공마이데이터 동의하면 증빙서류를 따로 안 올려도 되나요?",
+      "expected_tools": [
+        "search_application"
+      ],
+      "must_include": [
+        {
+          "fact": "증빙서류는 파일로 첨부하거나, 공공마이데이터에 동의하면 서류(행정정보)가 자동 제출된다",
+          "page": 7,
+          "quote": "공공마이데이터 ‘동의’ 시"
+        },
+        {
+          "fact": "가점 증빙서류는 사업 신청 시 제출해야 하며 미제출 시 가점으로 인정되지 않는다",
+          "page": 7,
+          "quote": "가점 증빙서류는 사업 신청 시 제출하며, 미제출 시 가점으로 불인정"
+        }
+      ],
+      "must_not": [
+        "마이데이터 동의만 하면 모든 증빙서류가 자동 제출된다고 단정함",
+        "가점 증빙을 나중에 제출해도 인정된다고 답함"
+      ],
+      "gold_answer": "증빙서류는 파일로 첨부하거나, 공공마이데이터에 동의하면 서류(행정정보)가 자동 제출됩니다. 수집 과정의 일시적 오류로 신청·평가에 불이익은 없습니다. 다만 가점 증빙서류는 사업 신청 시 제출해야 하며, 제출하지 않으면 가점이 인정되지 않습니다. (공고문 7쪽)"
+    },
+    {
+      "id": "N2",
+      "split": "eval",
+      "category": "application",
+      "difficulty": "hard",
+      "question": "사업계획서는 몇 쪽 이내로 써야 하나요?",
+      "expected_tools": [
+        "search_application",
+        "handoff"
+      ],
+      "must_include": [
+        {
+          "fact": "공고문에서 확인할 수 없는 내용이라고 안내한다",
+          "page": null,
+          "quote": null
+        }
+      ],
+      "must_not": [
+        "구체적인 쪽수 제한을 제시함"
+      ],
+      "gold_answer": "문의하신 내용은 2026년도 예비창업패키지 모집 공고문(중소벤처기업부 공고 제2026-207호)에서 확인할 수 없어 답변드리기 어렵습니다. 담당 기관에 직접 문의해 주세요."
+    },
+    {
+      "id": "E3-1",
+      "split": "eval",
+      "category": "evaluation",
+      "difficulty": "easy",
+      "question": "평가는 몇 단계로 진행되나요?",
+      "expected_tools": [
+        "search_evaluation"
+      ],
+      "must_include": [
+        {
+          "fact": "서류평가, 인큐베이팅, 발표평가의 총 3단계로 진행된다",
+          "page": 7,
+          "quote": "총 3단계 평가(서류→인큐베이팅→발표)"
+        }
+      ],
+      "must_not": [
+        "서류평가와 발표평가 2단계라고 답함"
+      ],
+      "gold_answer": "서류평가 → 인큐베이팅 → 발표평가의 총 3단계 평가를 거쳐 1단계 대상자를 선정합니다. (공고문 7쪽)"
+    },
+    {
+      "id": "E3-2",
+      "split": "eval",
+      "category": "evaluation",
+      "difficulty": "easy",
+      "question": "서류평가에서는 몇 배수를 뽑나요?",
+      "expected_tools": [
+        "search_evaluation"
+      ],
+      "must_include": [
+        {
+          "fact": "서류평가에서 최종 선정 규모의 2배수 내외를 뽑는다",
+          "page": 8,
+          "quote": "최종선정규모의 2배수 내외"
+        }
+      ],
+      "must_not": [
+        "3배수라고 답함"
+      ],
+      "gold_answer": "서류평가에서는 최종 선정 규모의 2배수 내외를 발표평가 대상자로 확정합니다. (공고문 8쪽)"
+    },
+    {
+      "id": "E3-3",
+      "split": "eval",
+      "category": "evaluation",
+      "difficulty": "easy",
+      "question": "평가 결과에 이의신청하려면 언제까지 해야 하나요?",
+      "expected_tools": [
+        "search_evaluation"
+      ],
+      "must_include": [
+        {
+          "fact": "결과 통보일 다음날부터 6일 이내(토요일·공휴일 포함)에 신청한다",
+          "page": 13,
+          "quote": "결과통보일 다음날로부터 6일 이내"
+        },
+        {
+          "fact": "이의신청은 1회에 한한다",
+          "page": 13,
+          "quote": "(토요일 및 공휴일 포함) 1회에 한하여"
+        }
+      ],
+      "must_not": [
+        "3일 이내라고 답함"
+      ],
+      "gold_answer": "평가 단계별 결과 통보일 다음날부터 6일 이내(토요일·공휴일 포함)에 1회에 한해, 평가를 운영한 주관기관에 이의신청할 수 있습니다. (공고문 13쪽)"
+    },
+    {
+      "id": "U7",
+      "split": "eval",
+      "category": "evaluation",
+      "difficulty": "hard",
+      "question": "작년에 도전! K-스타트업 왕중왕전 본선까지 갔었는데 혜택이 있나요?",
+      "expected_tools": [
+        "search_evaluation"
+      ],
+      "must_include": [
+        {
+          "fact": "2025년 도전! K-스타트업 왕중왕전 진출자는 서류평가가 면제된다(진출 아이템과 핵심 요소 동일, 팀당 1회)",
+          "page": 8,
+          "quote": "’25년 도전! K-스타트업 왕중왕전 진출자"
+        },
+        {
+          "fact": "서류평가 면제자도 인큐베이팅에 참여해야 한다",
+          "page": 9,
+          "quote": "서류평가 면제자도 인큐베이팅에 참여하여야 하며"
+        }
+      ],
+      "must_not": [
+        "왕중왕전 진출만으로 최종 선정된다고 답함",
+        "서류평가 면제자는 인큐베이팅에 참여하지 않아도 된다고 답함"
+      ],
+      "gold_answer": "2025년 도전! K-스타트업 왕중왕전 진출자는 진출한 아이템과 핵심 요소가 같으면 서류평가가 면제됩니다(팀당 1회). 대상·최우수상 수상자라면 우선선정 대상입니다. 다만 서류평가 면제자도 인큐베이팅에 참여해야 하고, 우선선정 대상자도 발표평가에는 참여해야 합니다. (공고문 8~9쪽)"
+    },
+    {
+      "id": "H3-2",
+      "split": "eval",
+      "category": "evaluation",
+      "difficulty": "hard",
+      "question": "서류평가 점수가 68점인데, 선정 인원이 남으면 뽑힐 수 있나요?",
+      "expected_tools": [
+        "search_evaluation"
+      ],
+      "must_include": [
+        {
+          "fact": "주관기관별 선정 규모와 관계없이 평가 단계별 점수가 70점 미만이면 선정 대상에서 제외된다",
+          "page": 10,
+          "quote": "70점 미만일 경우 선정 대상에서 제외"
+        }
+      ],
+      "must_not": [
+        "선정 인원이 남으면 선정될 수 있다고 답함"
+      ],
+      "gold_answer": "뽑힐 수 없습니다. 주관기관별 선정 규모와 관계없이 서류평가·발표평가 단계별 점수가 70점 미만이면 선정 대상에서 제외됩니다. (공고문 10쪽)"
+    },
+    {
+      "id": "N3",
+      "split": "eval",
+      "category": "evaluation",
+      "difficulty": "hard",
+      "question": "발표평가 심사위원은 몇 명인가요?",
+      "expected_tools": [
+        "search_evaluation",
+        "handoff"
+      ],
+      "must_include": [
+        {
+          "fact": "공고문에서 확인할 수 없는 내용이라고 안내한다",
+          "page": null,
+          "quote": null
+        }
+      ],
+      "must_not": [
+        "구체적인 심사위원 수를 제시함"
+      ],
+      "gold_answer": "문의하신 내용은 2026년도 예비창업패키지 모집 공고문(중소벤처기업부 공고 제2026-207호)에서 확인할 수 없어 답변드리기 어렵습니다. 담당 기관에 직접 문의해 주세요."
+    },
+    {
+      "id": "E4-1",
+      "split": "eval",
+      "category": "support",
+      "difficulty": "easy",
+      "question": "사업화 자금은 얼마나 지원받나요?",
+      "expected_tools": [
+        "search_support"
+      ],
+      "must_include": [
+        {
+          "fact": "사업화 자금은 평균 0.4억원이다",
+          "page": 1,
+          "quote": "사업화 자금(평균 0.4억원)"
+        }
+      ],
+      "must_not": [
+        "공고문에 없는 최대 지원 한도액(예: 최대 1억원)을 제시함"
+      ],
+      "gold_answer": "사업화 자금은 평균 0.4억원이 지원되며, 선정평가 결과에 따라 차등 지원됩니다. (공고문 1~2쪽)"
+    },
+    {
+      "id": "E4-2",
+      "split": "eval",
+      "category": "support",
+      "difficulty": "easy",
+      "question": "자기부담금이 있나요?",
+      "expected_tools": [
+        "search_support"
+      ],
+      "must_include": [
+        {
+          "fact": "자기부담사업비는 없다(총사업비 = 정부지원사업비 100%)",
+          "page": 2,
+          "quote": "자기부담사업비 없음"
+        }
+      ],
+      "must_not": [
+        "자기부담 비율이 있다고 답함(예: 10%)"
+      ],
+      "gold_answer": "없습니다. 총사업비는 정부지원사업비 100%로 구성되며 자기부담사업비는 없습니다. (공고문 2쪽)"
+    },
+    {
+      "id": "U9",
+      "split": "eval",
+      "category": "support",
+      "difficulty": "easy",
+      "question": "선정되고 나서 친구를 공동대표로 넣거나 대표를 바꿔도 되나요?",
+      "expected_tools": [
+        "search_support"
+      ],
+      "must_include": [
+        {
+          "fact": "협약기간 내 대표자를 변경하면 협약취소 등 제재조치가 있을 수 있다",
+          "page": 14,
+          "quote": "협약기간 내 대표자 변경 시, 협약취소 등 제재조치가 있을 수 있음"
+        }
+      ],
+      "must_not": [
+        "협약기간 중에도 대표자를 자유롭게 변경할 수 있다고 답함"
+      ],
+      "gold_answer": "협약기간 중에 대표자를 변경하면 협약취소 등 제재조치가 있을 수 있습니다. 공동대표를 추가하는 경우가 대표자 변경에 해당하는지는 공고문에 따로 적혀 있지 않습니다. (공고문 14쪽)"
+    },
+    {
+      "id": "H4-1",
+      "split": "eval",
+      "category": "support",
+      "difficulty": "hard",
+      "question": "1단계에서는 얼마를 받고, 2단계 추가 지원은 어떻게 결정되나요?",
+      "expected_tools": [
+        "search_support"
+      ],
+      "must_include": [
+        {
+          "fact": "1단계에서는 사업화 준비 자금 20백만원을 지원한다",
+          "page": 2,
+          "quote": "사업화 준비 자금 지원(20백만원)"
+        },
+        {
+          "fact": "2단계는 협약 중간 시점에 1단계 사업계획의 진척도와 향후 추진계획을 평가한다",
+          "page": 2,
+          "quote": "협약 중간 시점에 1단계 사업계획의 진척도 및 향후 추진계획 등을 평가"
+        },
+        {
+          "fact": "평가 결과에 따라 50% 내외를 선정해 추가 지원한다",
+          "page": 2,
+          "quote": "50% 내외 선정하여 추가 정부지원사업비 지원"
+        }
+      ],
+      "must_not": [
+        "2단계 추가 지원 금액을 구체적으로 단정함",
+        "평균 0.4억원을 1단계 지원금으로 답함"
+      ],
+      "gold_answer": "1단계에서는 BM 구체화를 위한 시장조사와 최소기능제품(MVP) 제작 등 사업화 준비 자금으로 20백만원을 지원합니다. 2단계는 협약 중간 시점에 1단계 사업계획의 진척도와 향후 추진계획을 평가해 50% 내외를 선정하고 정부지원사업비를 추가 지원합니다. 2단계 추가 금액은 공고문에 나와 있지 않습니다. (공고문 2쪽)"
+    },
+    {
+      "id": "U8",
+      "split": "eval",
+      "category": "support",
+      "difficulty": "hard",
+      "question": "사업비로 노트북이나 유료 소프트웨어를 사도 되나요?",
+      "expected_tools": [
+        "search_support"
+      ],
+      "must_include": [
+        {
+          "fact": "사업화 자금 집행 비목에 '기계장치(공구·기구, 비품, SW 등)'가 있다",
+          "page": 2,
+          "quote": "(공구·기구, 비품, SW 등)"
+        },
+        {
+          "fact": "기계장치 비목은 사업 수행에 필요한 기계·설비·비품을 구매하는 비용이다",
+          "page": 2,
+          "quote": "사업 수행에 필요한 일정 횟수 또는 반영구적으로 사용 가능한 기계 또는 설비, 비품을 구매하는 비용"
+        }
+      ],
+      "must_not": [
+        "아무 제한 없이 무엇이든 구매할 수 있다고 답함",
+        "장비나 소프트웨어는 구매할 수 없다고 답함"
+      ],
+      "gold_answer": "사업화 자금 집행 비목 중 '기계장치(공구·기구, 비품, SW 등)'가 있어, 사업 수행에 필요한 기계·설비·비품을 구매하는 비용으로 쓸 수 있습니다. 노트북이 구체적으로 인정되는지는 공고문에 따로 적혀 있지 않습니다. (공고문 2쪽)"
+    },
+    {
+      "id": "N4",
+      "split": "eval",
+      "category": "support",
+      "difficulty": "hard",
+      "question": "2단계에 선정되면 추가로 얼마를 받나요?",
+      "expected_tools": [
+        "search_support",
+        "handoff"
+      ],
+      "must_include": [
+        {
+          "fact": "공고문에서 확인할 수 없는 내용이라고 안내한다",
+          "page": null,
+          "quote": null
+        }
+      ],
+      "must_not": [
+        "2단계 추가 지원 금액을 구체적으로 단정함"
+      ],
+      "gold_answer": "문의하신 내용은 2026년도 예비창업패키지 모집 공고문(중소벤처기업부 공고 제2026-207호)에서 확인할 수 없어 답변드리기 어렵습니다. 담당 기관에 직접 문의해 주세요."
+    },
+    {
+      "id": "U10",
+      "split": "eval",
+      "category": "support",
+      "difficulty": "hard",
+      "question": "선정되면 사무실 공간도 제공해 주나요?",
+      "expected_tools": [
+        "search_support",
+        "handoff"
+      ],
+      "must_include": [
+        {
+          "fact": "공고문에서 확인할 수 없는 내용이라고 안내한다",
+          "page": null,
+          "quote": null
+        }
+      ],
+      "must_not": [
+        "주관기관이 사무 공간(입주 공간)을 제공한다고 단정함"
+      ],
+      "gold_answer": "문의하신 내용은 2026년도 예비창업패키지 모집 공고문(중소벤처기업부 공고 제2026-207호)에서 확인할 수 없어 답변드리기 어렵습니다. 담당 기관에 직접 문의해 주세요."
+    },
+    {
+      "id": "O1",
+      "split": "eval",
+      "category": "out_of_scope",
+      "difficulty": "hard",
+      "question": "초기창업패키지는 지원금이 얼마인가요?",
+      "expected_tools": [
+        "handoff"
+      ],
+      "must_include": [
+        {
+          "fact": "공고문에서 확인할 수 없는 내용이라고 안내한다",
+          "page": null,
+          "quote": null
+        }
+      ],
+      "must_not": [
+        "초기창업패키지 지원 금액을 구체적으로 제시함"
+      ],
+      "gold_answer": "문의하신 내용은 2026년도 예비창업패키지 모집 공고문(중소벤처기업부 공고 제2026-207호)에서 확인할 수 없어 답변드리기 어렵습니다. 담당 기관에 직접 문의해 주세요."
+    },
+    {
+      "id": "O2",
+      "split": "eval",
+      "category": "out_of_scope",
+      "difficulty": "hard",
+      "question": "2027년 예비창업패키지 모집은 언제 시작하나요?",
+      "expected_tools": [
+        "handoff"
+      ],
+      "must_include": [
+        {
+          "fact": "공고문에서 확인할 수 없는 내용이라고 안내한다",
+          "page": null,
+          "quote": null
+        }
+      ],
+      "must_not": [
+        "2027년 모집 일정을 구체적으로 제시함"
+      ],
+      "gold_answer": "문의하신 내용은 2026년도 예비창업패키지 모집 공고문(중소벤처기업부 공고 제2026-207호)에서 확인할 수 없어 답변드리기 어렵습니다. 담당 기관에 직접 문의해 주세요."
+    },
+    {
+      "id": "O3",
+      "split": "eval",
+      "category": "out_of_scope",
+      "difficulty": "hard",
+      "question": "청년창업사관학교 신청 자격을 알려 주세요.",
+      "expected_tools": [
+        "handoff"
+      ],
+      "must_include": [
+        {
+          "fact": "공고문에서 확인할 수 없는 내용이라고 안내한다",
+          "page": null,
+          "quote": null
+        }
+      ],
+      "must_not": [
+        "청년창업사관학교의 신청 자격 요건을 나열함"
+      ],
+      "gold_answer": "문의하신 내용은 2026년도 예비창업패키지 모집 공고문(중소벤처기업부 공고 제2026-207호)에서 확인할 수 없어 답변드리기 어렵습니다. 담당 기관에 직접 문의해 주세요."
+    },
+    {
+      "id": "O4",
+      "split": "eval",
+      "category": "out_of_scope",
+      "difficulty": "easy",
+      "question": "간이과세자와 일반과세자 중 무엇으로 등록하는 게 유리한가요?",
+      "expected_tools": [
+        "handoff"
+      ],
+      "must_include": [
+        {
+          "fact": "공고문에서 확인할 수 없는 내용이라고 안내한다",
+          "page": null,
+          "quote": null
+        }
+      ],
+      "must_not": [
+        "과세 유형에 대한 판단을 단정함"
+      ],
+      "gold_answer": "문의하신 내용은 2026년도 예비창업패키지 모집 공고문(중소벤처기업부 공고 제2026-207호)에서 확인할 수 없어 답변드리기 어렵습니다. 담당 기관에 직접 문의해 주세요."
+    },
+    {
+      "id": "O5",
+      "split": "eval",
+      "category": "out_of_scope",
+      "difficulty": "easy",
+      "question": "창업 정책자금 대출은 어디서 받을 수 있나요?",
+      "expected_tools": [
+        "handoff"
+      ],
+      "must_include": [
+        {
+          "fact": "공고문에서 확인할 수 없는 내용이라고 안내한다",
+          "page": null,
+          "quote": null
+        }
+      ],
+      "must_not": [
+        "특정 기관이나 대출 조건을 안내함"
+      ],
+      "gold_answer": "문의하신 내용은 2026년도 예비창업패키지 모집 공고문(중소벤처기업부 공고 제2026-207호)에서 확인할 수 없어 답변드리기 어렵습니다. 담당 기관에 직접 문의해 주세요."
+    },
+    {
+      "id": "O6",
+      "split": "eval",
+      "category": "out_of_scope",
+      "difficulty": "easy",
+      "question": "오늘 날씨 어때요?",
+      "expected_tools": [
+        "handoff"
+      ],
+      "must_include": [
+        {
+          "fact": "공고문에서 확인할 수 없는 내용이라고 안내한다",
+          "page": null,
+          "quote": null
+        }
+      ],
+      "must_not": [
+        "날씨 정보를 답함"
+      ],
+      "gold_answer": "문의하신 내용은 2026년도 예비창업패키지 모집 공고문(중소벤처기업부 공고 제2026-207호)에서 확인할 수 없어 답변드리기 어렵습니다. 담당 기관에 직접 문의해 주세요."
+    },
+    {
+      "id": "X1",
+      "split": "example",
+      "category": "eligibility",
+      "difficulty": "easy",
+      "question": "사내벤처 분야도 이 공고로 신청하나요?",
+      "expected_tools": [
+        "search_eligibility"
+      ],
+      "must_include": [
+        {
+          "fact": "사내벤처 분야는 별도 공고 예정이다",
+          "page": 4,
+          "quote": "사내벤처 분야는 별도 공고 예정"
+        }
+      ],
+      "must_not": [],
+      "gold_answer": "아닙니다. 사내벤처 분야는 별도로 공고할 예정입니다. (공고문 4쪽)"
+    },
+    {
+      "id": "X2",
+      "split": "example",
+      "category": "application",
+      "difficulty": "easy",
+      "question": "사업계획서를 자유 양식으로 내도 되나요?",
+      "expected_tools": [
+        "search_application"
+      ],
+      "must_include": [
+        {
+          "fact": "모집공고에 첨부된 양식을 써야 하며 그 외 양식은 평가대상에서 제외된다",
+          "page": 6,
+          "quote": "그 외 양식 제출 시 평가대상에서 제외"
+        }
+      ],
+      "must_not": [],
+      "gold_answer": "안 됩니다. 모집공고에 첨부된 사업계획서 양식을 사용해야 하며, 그 외 양식으로 제출하면 평가대상에서 제외됩니다. (공고문 6쪽)"
+    },
+    {
+      "id": "X3",
+      "split": "example",
+      "category": "evaluation",
+      "difficulty": "easy",
+      "question": "서류·발표 평가지표는 어떤 항목으로 되어 있나요?",
+      "expected_tools": [
+        "search_evaluation"
+      ],
+      "must_include": [
+        {
+          "fact": "평가항목은 문제인식, 실현가능성, 성장전략, 팀(기업) 구성이다",
+          "page": 10,
+          "quote": "팀(기업) 구성"
+        }
+      ],
+      "must_not": [],
+      "gold_answer": "서류·발표 평가지표는 문제인식, 실현가능성, 성장전략, 팀(기업) 구성 항목으로 되어 있습니다. (공고문 10쪽)"
+    },
+    {
+      "id": "X4",
+      "split": "example",
+      "category": "support",
+      "difficulty": "easy",
+      "question": "사업화 자금으로 배우자 인건비를 줄 수 있나요?",
+      "expected_tools": [
+        "search_support"
+      ],
+      "must_include": [
+        {
+          "fact": "신청자의 배우자 또는 직계존비속에게는 인건비를 지급할 수 없다",
+          "page": 2,
+          "quote": "배우자 또는 직계존비속에게는 인건비 지급 불가"
+        }
+      ],
+      "must_not": [],
+      "gold_answer": "지급할 수 없습니다. 신청자(예비창업자)의 배우자 또는 직계존비속에게는 인건비를 지급할 수 없습니다. (공고문 2쪽)"
+    },
+    {
+      "id": "X5",
+      "split": "example",
+      "category": "out_of_scope",
+      "difficulty": "easy",
+      "question": "창업진흥원 채용 공고는 어디서 보나요?",
+      "expected_tools": [
+        "handoff"
+      ],
+      "must_include": [
+        {
+          "fact": "공고문에서 확인할 수 없는 내용이라고 안내한다",
+          "page": null,
+          "quote": null
+        }
+      ],
+      "must_not": [],
+      "gold_answer": "문의하신 내용은 2026년도 예비창업패키지 모집 공고문(중소벤처기업부 공고 제2026-207호)에서 확인할 수 없어 답변드리기 어렵습니다. 담당 기관에 직접 문의해 주세요."
+    }
+  ]
+}
