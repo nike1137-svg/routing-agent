@@ -181,17 +181,41 @@ def _report(run: dict) -> None:
 
 
 def validate_judge() -> bool:
-    """모범 답안은 전부 1점이어야 한다. 하나라도 0점이면 채점기를 믿지 않는다."""
-    results = []
-    for item in load_items(split=None):
-        res = judge_answer(item, item["gold_answer"])
-        results.append((item, res))
-        mark = "O" if res["passed"] else "X"
-        extra = res.get("detail") or f"누락 {res.get('missing_facts')} 위반 {res.get('violated_rules')}"
-        print(f"  {mark} {item['id']:5} [{res['method']}] {extra if not res['passed'] else ''}")
-    ok = sum(r["passed"] for _, r in results)
-    print(f"\n채점기 검증: 모범 답안 {ok}/{len(results)} 통과  |  누적 비용 {agent.ledger_total():.6f}달러")
-    return ok == len(results)
+    """채점기 자체 검증.
+    양성: 모범 답안은 전부 1점이어야 한다.
+    음성: 일부러 틀리게 만든 답은 전부 0점이어야 한다.
+      - 누락형: 답해야 하는 문항에 다른 문항의 모범 답안을 넣어 필수 사실을 빠뜨림
+      - 위반형: 모범 답안 끝에 금지 사항에 해당하는 틀린 주장(negative_claim)을 덧붙임
+      - 넘기기형: 넘겨야 하는 문항에 다른 문항의 모범 답안(실제 답변)을 넣음
+    하나라도 기대와 다르면 채점기를 믿지 않는다.
+    """
+    items = load_items(split=None)
+    answerable = [i for i in items if not expects_handoff(i)]
+    handoff_items = [i for i in items if expects_handoff(i)]
+    cases = [("양성(모범 답안)", i, i["gold_answer"], True) for i in items]
+    cases += [("음성-누락형", i, answerable[(n + 1) % len(answerable)]["gold_answer"], False)
+              for n, i in enumerate(answerable)]
+    cases += [("음성-위반형", i, f"{i['gold_answer']} {i['negative_claim']}", False)
+              for i in items if i.get("negative_claim")]
+    cases += [("음성-넘기기형", i, answerable[n % len(answerable)]["gold_answer"], False)
+              for n, i in enumerate(handoff_items)]
+
+    summary: dict[str, list[int]] = {}
+    for kind, item, text, expected in cases:
+        res = judge_answer(item, text)
+        ok = res["passed"] == expected
+        tally = summary.setdefault(kind, [0, 0])
+        tally[0] += ok
+        tally[1] += 1
+        if not ok:
+            detail = res.get("detail") or f"누락 {res.get('missing_facts')} 위반 {res.get('violated_rules')}"
+            print(f"  ✗ {kind} {item['id']:5} [{res['method']}] 기대 {'통과' if expected else '실패'}, 결과 반대: {detail}")
+
+    print("\n채점기 검증")
+    for kind, (ok, total) in summary.items():
+        print(f"  {kind:14} {ok}/{total} 기대대로")
+    print(f"누적 비용 {agent.ledger_total():.6f}달러")
+    return all(ok == total for ok, total in summary.values())
 
 
 if __name__ == "__main__":

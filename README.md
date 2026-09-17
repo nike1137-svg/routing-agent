@@ -106,7 +106,7 @@ streamlit run app.py --server.address localhost
 ### 측정
 
 ```bash
-# 1) 모범 답안으로 채점기 자체를 검증
+# 1) 채점기 자체를 검증 (모범 답안은 통과, 일부러 틀린 답은 실패해야 함)
 python evaluate.py validate-judge
 
 # 2) 점수용 31건 실행 → runs/<라벨>.json 저장 → 채점
