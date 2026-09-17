@@ -1,4 +1,4 @@
-"""파이프라인: 판정 → 넘기기 판단 → 근거 조립 → 답변 → 검증 (LangGraph).
+"""파이프라인: 판정 → 넘기기 판단 → (모델이 조회 도구를 골라) 근거 조립 → 답변 → 검증 (LangGraph).
 
 사용:
     python agent.py "질문"
@@ -9,7 +9,6 @@ import os
 import re
 import sys
 from datetime import datetime
-from pathlib import Path
 from typing import TypedDict
 
 from langgraph.graph import END, START, StateGraph
@@ -17,7 +16,8 @@ from openai import OpenAI
 
 import context
 import prompts
-from config import CONFIDENCE_THRESHOLD, LEDGER_PATH, MODEL_ANSWER, MODEL_ROUTER, PRICES, cost_limit_usd
+from config import (CONFIDENCE_THRESHOLD, LEDGER_PATH, MAX_TOOL_TURNS, MODEL_ANSWER, MODEL_ROUTER, PRICES,
+                    cost_limit_usd)
 
 
 # ---------------------------------------------------------------- 비용 기록 · LLM 호출
@@ -43,8 +43,8 @@ def _client() -> OpenAI:
     return OpenAI()  # OPENAI_API_KEY 는 .env 에서 읽는다
 
 
-def chat_json(model: str, messages: list[dict], max_tokens: int, purpose: str) -> tuple[dict | None, dict]:
-    """JSON 응답을 받는다. 호출 전 누적 비용 상한을 확인하고, 호출 후 실제 사용량을 기록한다."""
+def _check_before_call(model: str) -> dict:
+    """호출 전: 키·가격 정보·누적 비용 상한을 확인한다."""
     if not os.getenv("OPENAI_API_KEY"):
         raise MissingApiKey("OPENAI_API_KEY 가 없습니다. .env.example 을 .env 로 복사하고 키를 입력하세요.")
     if model not in PRICES:
@@ -53,13 +53,11 @@ def chat_json(model: str, messages: list[dict], max_tokens: int, purpose: str) -
     ledger = _read_ledger()
     if ledger["total_usd"] >= limit:
         raise CostLimitExceeded(f"누적 비용 {ledger['total_usd']:.4f}달러가 상한 {limit}달러에 도달해 호출을 멈춥니다.")
+    return ledger
 
-    resp = _client().chat.completions.create(
-        model=model,
-        messages=messages,
-        response_format={"type": "json_object"},
-        max_completion_tokens=max_tokens,
-    )
+
+def _record_usage(ledger: dict, model: str, resp, purpose: str) -> dict:
+    """호출 후: 실제 사용 토큰으로 비용을 계산해 누적 기록에 더한다."""
     in_price, out_price = PRICES[model]
     u = resp.usage
     usage = {
@@ -72,12 +70,46 @@ def chat_json(model: str, messages: list[dict], max_tokens: int, purpose: str) -
     ledger["total_usd"] = round(ledger["total_usd"] + usage["cost_usd"], 6)
     ledger["calls"].append({"at": datetime.now().isoformat(timespec="seconds"), **usage})
     LEDGER_PATH.write_text(json.dumps(ledger, ensure_ascii=False, indent=1), encoding="utf-8")
+    return usage
 
+
+def _parse_json(text: str | None) -> dict | None:
     try:
-        data = json.loads(resp.choices[0].message.content or "")
+        data = json.loads(text or "")
     except json.JSONDecodeError:
-        data = None
-    return data, usage
+        return None
+    return data if isinstance(data, dict) else None
+
+
+def chat_json(model: str, messages: list[dict], max_tokens: int, purpose: str) -> tuple[dict | None, dict]:
+    """JSON 응답을 받는다(분류·채점용)."""
+    ledger = _check_before_call(model)
+    resp = _client().chat.completions.create(
+        model=model,
+        messages=messages,
+        response_format={"type": "json_object"},
+        max_completion_tokens=max_tokens,
+    )
+    usage = _record_usage(ledger, model, resp, purpose)
+    return _parse_json(resp.choices[0].message.content), usage
+
+
+def chat_tools(model: str, messages: list[dict], tools: list[dict], max_tokens: int, purpose: str):
+    """조회 도구를 붙여 호출한다. 모델이 도구를 부를지, JSON 으로 답할지 정한다.
+
+    reasoning_effort="none": gpt-5.6 계열은 chat completions 에서 추론 모드와 도구 호출을 함께 쓸 수 없다(API 오류 400).
+    """
+    ledger = _check_before_call(model)
+    resp = _client().chat.completions.create(
+        model=model,
+        messages=messages,
+        tools=tools,
+        response_format={"type": "json_object"},
+        reasoning_effort="none",
+        max_completion_tokens=max_tokens,
+    )
+    usage = _record_usage(ledger, model, resp, purpose)
+    return resp.choices[0].message, usage
 
 
 # ---------------------------------------------------------------- 기계적 검증
@@ -86,6 +118,7 @@ _UNITS = ("백만원|억원|만원|원|개월|주|일|시|분|년|월|점|명|�
 NUMBER_EXPR = re.compile(rf"\d+(?:[.,]\d+)*\s*(?:{_UNITS})?")
 PROGRAM_NAME = re.compile(r"[가-힣A-Za-z]+(?:패키지|사관학교)")
 PAGE_CITATION = re.compile(r"\(공고문[^)]*\)")
+PAGE_RANGE = re.compile(r"(\d+)(?:\s*~\s*(\d+))?\s*쪽")
 
 
 def _nospace(s: str) -> str:
@@ -129,6 +162,15 @@ def verify_answer(answer: str, context_text: str, cited: list[str], provided_ids
     return result
 
 
+def cited_sections(answer: str, sections: list[dict]) -> list[str]:
+    """답변 끝의 (공고문 N쪽) 표기와 쪽이 겹치는 조회 섹션을 인용한 것으로 본다."""
+    pages = set()
+    for m in PAGE_CITATION.finditer(answer):
+        for a, b in PAGE_RANGE.findall(m.group()):
+            pages |= set(range(int(a), int(b or a) + 1))
+    return [s["id"] for s in sections if pages & set(s["pages"])]
+
+
 # ---------------------------------------------------------------- LangGraph
 class AgentState(TypedDict, total=False):
     question: str
@@ -136,10 +178,11 @@ class AgentState(TypedDict, total=False):
     confidence: float
     route_reason: str
     route: str
+    messages: list[dict]
+    tool_rounds: int
     tools_called: list[str]
     sections: list[dict]
     context_text: str
-    answerable: bool
     answer: str
     cited_sections: list[str]
     verification: dict
@@ -159,7 +202,8 @@ def classify(state: AgentState) -> AgentState:
             confidence = 0.0
         reason = str(data.get("reason", ""))
     return {"category": category, "confidence": confidence, "route_reason": reason,
-            "tools_called": [], "usage": state.get("usage", []) + [usage]}
+            "tools_called": [], "sections": [], "context_text": "", "tool_rounds": 0,
+            "usage": state.get("usage", []) + [usage]}
 
 
 def gate(state: AgentState) -> AgentState:
@@ -168,39 +212,83 @@ def gate(state: AgentState) -> AgentState:
         return {"route": "handoff", "handoff_reason": "범위 밖 질문"}
     if state["confidence"] < CONFIDENCE_THRESHOLD:
         return {"route": "handoff", "handoff_reason": f"분류 확신도 낮음({state['confidence']:.2f} < {CONFIDENCE_THRESHOLD})"}
-    return {"route": "retrieve"}
+    return {"route": "agent"}
 
 
-def retrieve(state: AgentState) -> AgentState:
-    text, used = context.build_context(state["category"])
-    return {
-        "tools_called": state["tools_called"] + [context.CATEGORY_TOOL[state["category"]]],
-        "sections": [{"id": s.id, "title": s.title, "pages": s.pages} for s in used],
-        "context_text": text,
-    }
+def agent(state: AgentState) -> AgentState:
+    """모델 차례: 조회 도구를 더 부를지, JSON 으로 답할지 모델이 정한다."""
+    messages = state.get("messages") or prompts.agent_messages(
+        state["question"], context.CATEGORIES[state["category"]], state["confidence"])
+    msg, usage = chat_tools(MODEL_ANSWER, messages, prompts.AGENT_TOOLS, 800, "agent")
+    assistant = {"role": "assistant", "content": msg.content}
+    calls = msg.tool_calls or []
+    if calls:
+        assistant["tool_calls"] = [{"id": c.id, "type": "function",
+                                    "function": {"name": c.function.name, "arguments": c.function.arguments}}
+                                   for c in calls]
+    update: AgentState = {"messages": messages + [assistant], "usage": state["usage"] + [usage]}
 
-
-def answer(state: AgentState) -> AgentState:
-    data, usage = chat_json(MODEL_ANSWER, prompts.answer_messages(state["question"], state["context_text"]), 600, "answer")
-    update: AgentState = {"usage": state["usage"] + [usage]}
-    if not isinstance(data, dict) or not data.get("answerable") or not str(data.get("answer", "")).strip():
-        update.update(answerable=False, route="handoff", handoff_reason="근거에서 답을 찾지 못함")
+    if calls:
+        if state["tool_rounds"] >= MAX_TOOL_TURNS:
+            update.update(route="handoff", handoff_reason=f"도구 호출 상한({MAX_TOOL_TURNS}회) 초과")
+        else:
+            update["route"] = "tools"
         return update
-    update.update(answerable=True, answer=str(data["answer"]).strip(),
-                  cited_sections=[str(c) for c in data.get("cited_sections", [])], route="verify")
+
+    data = _parse_json(msg.content)
+    if not any(t in context.TOOL_CATEGORY for t in state["tools_called"]):
+        update.update(route="handoff", handoff_reason="근거를 조회하지 않고 답하려 함")
+    elif data is None:
+        update.update(route="handoff", handoff_reason="답변 응답을 읽지 못함")
+    elif not data.get("answerable") or not str(data.get("answer", "")).strip():
+        update.update(route="handoff", handoff_reason="근거에서 답을 찾지 못함")
+    else:
+        update.update(answer=str(data["answer"]).strip(), route="verify")
     return update
 
 
+def tools(state: AgentState) -> AgentState:
+    """모델이 요청한 조회 도구를 실행한다. 조회 도구는 자기 카테고리 섹션만 돌려준다."""
+    messages = list(state["messages"])
+    tools_called = list(state["tools_called"])
+    sections = list(state["sections"])
+    context_text = state["context_text"]
+
+    for call in messages[-1]["tool_calls"]:
+        name = call["function"]["name"]
+        already = name in tools_called
+        tools_called.append(name)
+        if name in context.TOOL_CATEGORY:
+            text, used = context.build_context(context.TOOL_CATEGORY[name])
+            if not already:
+                sections += [{"id": s.id, "title": s.title, "pages": s.pages} for s in used]
+                context_text = f"{context_text}\n\n{text}" if context_text else text
+            content = text
+        else:
+            content = json.dumps({"error": f"없는 도구: {name}"}, ensure_ascii=False)
+        messages.append({"role": "tool", "tool_call_id": call["id"], "content": content})
+
+    return {"messages": messages, "tools_called": tools_called, "sections": sections,
+            "context_text": context_text, "tool_rounds": state["tool_rounds"] + 1, "route": "agent"}
+
+
 def verify(state: AgentState) -> AgentState:
-    result = verify_answer(state["answer"], state["context_text"], state["cited_sections"],
+    cited = cited_sections(state["answer"], state["sections"])
+    result = verify_answer(state["answer"], state["context_text"], cited,
                            [s["id"] for s in state["sections"]], state["question"])
+    update: AgentState = {"verification": result, "cited_sections": cited}
     if result["passed"]:
-        return {"verification": result, "route": "end", "final_answer": state["answer"]}
-    return {"verification": result, "route": "handoff", "handoff_reason": "검증 실패(근거에 없는 내용 포함)"}
+        update.update(route="end", final_answer=state["answer"])
+    else:
+        update.update(route="handoff", handoff_reason="검증 실패(근거에 없는 내용 포함)")
+    return update
 
 
 def handoff(state: AgentState) -> AgentState:
-    return {"tools_called": state.get("tools_called", []) + ["handoff"], "final_answer": prompts.HANDOFF_MESSAGE}
+    tools_called = state.get("tools_called", [])
+    if "handoff" not in tools_called:
+        tools_called = tools_called + ["handoff"]
+    return {"tools_called": tools_called, "final_answer": prompts.HANDOFF_MESSAGE}
 
 
 def _next(state: AgentState) -> str:
@@ -209,14 +297,14 @@ def _next(state: AgentState) -> str:
 
 def build_graph():
     g = StateGraph(AgentState)
-    for name, fn in [("classify", classify), ("gate", gate), ("retrieve", retrieve),
-                     ("answer", answer), ("verify", verify), ("handoff", handoff)]:
+    for name, fn in [("classify", classify), ("gate", gate), ("agent", agent), ("tools", tools),
+                     ("verify", verify), ("handoff", handoff)]:
         g.add_node(name, fn)
     g.add_edge(START, "classify")
     g.add_edge("classify", "gate")
-    g.add_conditional_edges("gate", _next, {"handoff": "handoff", "retrieve": "retrieve"})
-    g.add_edge("retrieve", "answer")
-    g.add_conditional_edges("answer", _next, {"handoff": "handoff", "verify": "verify"})
+    g.add_conditional_edges("gate", _next, {"handoff": "handoff", "agent": "agent"})
+    g.add_conditional_edges("agent", _next, {"tools": "tools", "verify": "verify", "handoff": "handoff"})
+    g.add_edge("tools", "agent")  # 조회 결과를 들고 모델에게 돌아간다
     g.add_conditional_edges("verify", _next, {"handoff": "handoff", "end": END})
     g.add_edge("handoff", END)
     return g.compile()
@@ -228,6 +316,7 @@ GRAPH = build_graph()
 def run(question: str) -> AgentState:
     state = GRAPH.invoke({"question": question})
     state.pop("context_text", None)
+    state.pop("messages", None)
     state["cost_usd"] = round(sum(u["cost_usd"] for u in state.get("usage", [])), 6)
     return state
 
@@ -235,7 +324,7 @@ def run(question: str) -> AgentState:
 def _print(state: AgentState) -> None:
     print(f"Q: {state['question']}")
     print(f"  판정: {state['category']} (확신도 {state['confidence']:.2f}) - {state.get('route_reason', '')}")
-    print(f"  도구: {state['tools_called']}")
+    print(f"  도구: {state['tools_called']} (도구 왕복 {state.get('tool_rounds', 0)}회)")
     if state.get("sections"):
         print("  근거: " + ", ".join(f"{s['id']}({s['pages'][0]}~{s['pages'][-1]}쪽)" for s in state["sections"]))
     if state.get("verification"):

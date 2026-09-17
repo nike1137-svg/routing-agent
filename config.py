@@ -18,6 +18,7 @@ MODEL_ANSWER = os.getenv("MODEL_ANSWER", "gpt-5.6-luna")
 MODEL_JUDGE = os.getenv("MODEL_JUDGE", "gpt-5.6-luna")
 
 CONFIDENCE_THRESHOLD = 0.7   # 분류 확신도 임계값
+MAX_TOOL_TURNS = 3           # 모델 ↔ 조회 도구 왕복 상한. 넘으면 넘긴다
 
 # USD / 1M tokens (input, output). OpenAI 요금 페이지 Standard·Short context, 2026-09-17 확인.
 # 캐시 입력 할인은 반영하지 않는다(비용을 많게 잡는 쪽).

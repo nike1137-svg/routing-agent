@@ -64,6 +64,7 @@ def show_result(state: dict) -> None:
         st.markdown("**② 호출한 도구**")
         for t in state["tools_called"]:
             st.write(f"- `{t}` · {TOOL_NAMES.get(t, t)}")
+        st.caption(f"조회 도구는 모델이 선택 · 도구 왕복 {state.get('tool_rounds', 0)}회")
         if state.get("handoff_reason"):
             st.caption(f"넘긴 이유: {state['handoff_reason']}")
     with col3:
@@ -80,7 +81,7 @@ def show_result(state: dict) -> None:
 
     if state.get("sections"):
         cited = set(state.get("cited_sections") or [])
-        st.markdown("**③ 근거로 쓴 문서 부분** (이 카테고리에 연결된 섹션만 프롬프트에 들어감)")
+        st.markdown("**③ 근거로 쓴 문서 부분** (모델이 호출한 조회 도구가 돌려준 섹션. 도구마다 자기 카테고리 섹션만 돌려줌)")
         for s in state["sections"]:
             mark = "📌 답변이 인용 · " if s["id"] in cited else ""
             pages = f"{s['pages'][0]}쪽" if len(s["pages"]) == 1 else f"{s['pages'][0]}~{s['pages'][-1]}쪽"
